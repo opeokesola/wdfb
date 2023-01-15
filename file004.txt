@@ -1,0 +1,138 @@
+------TAKAFUL LIFE Detail  --Annual
+Select sum(amount) from VWIndividualMarketingReport where year(TransactionDate)=2023 and  TransactionDate <= '2023-09-30'
+------TAKAFUL LIFE Detail  --Quarter
+Select sum(amount)  from VWIndividualMarketingReport where TransactionDate between '2023-07-01' and '2023-09-30'
+------TAKAFUL LIFE Detail   --Weekly
+Select sum(amount)  from VWIndividualMarketingReport  where TransactionDate between '2023-09-24' and '2023-09-30'
+--Count of New and Renewal
+select  count (distinct policyno) from VWIndividualMarketingReport where  year(TransactionDate) = 2023 and  monthdiff=0 and TransactionDate between  '2023-01-01' and '2023-01-05'
+select count (distinct policyno) from VWIndividualMarketingReport where  year(TransactionDate) = 2023 and  monthdiff<>0 and TransactionDate between  '2023-01-01' and '2023-01-05'
+select  count (distinct policyno) from VWIndividualMarketingReport where  year(TransactionDate) = 2023 and  monthdiff=0 and TransactionDate between  '2023-01-01' and '2023-01-05'
+select count (distinct policyno) from VWIndividualMarketingReport where  year(TransactionDate) = 2023 and  monthdiff<>0 and TransactionDate between  '2023-01-01' and '2023-01-05'
+select  count (distinct policyno) from VWIndividualMarketingReport where  year(TransactionDate) = 2023 and  monthdiff=0 and TransactionDate between  '2023-01-01' and '2023-01-05'
+select count (distinct policyno) from VWIndividualMarketingReport where  year(TransactionDate) = 2023 and  monthdiff<>0 and TransactionDate between  '2023-01-01' and '2023-01-05'
+
+
+3174
+7083
+
+
+
+-----------------Group LIFE
+select * from GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate<='2023-05-28'
+
+select name, CompanyName, ClearingDate, AAGrossAmount, ID_Currency, ID_State from GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate<='2023-05-28'
+order by 1, 2
+
+select name, CompanyName, ClearingDate, AAGrossAmount, ID_Currency, ID_State from GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate>'2023-05-20'
+order by 3,1
+
+select name, AAGrossAmount, CompanyName, ID_State, ClearingDate, NetGrossComision, ID_Currency, CoInsurer, CoInsureProportion from GroupMarketingReportDetails 
+where year(clearingdate)=2023 and ClearingDate>'2023-07-09'
+order by 5,1
+
+select name, AAGrossAmount, CompanyName, ID_State,ClearingDate,  ID_Currency, NetGrossComision from GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate>'2023-01-20'
+and id_marketer=8
+order by 5,1
+
+
+select name, CompanyName, AAGrossAmount, ClearingDate, ID_Currency,ID_State, NetGrossComision from GROUPPLAN_V10_AAI.dbo.GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate>'2023-01-01'
+order by 4,1
+
+----MD Comparision 
+select name, CompanyName, AAGrossAmount from GROUPPLAN_V10_AAI.dbo.GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate between '2023-01-01' and '2023-01-28'
+order by 1,2,3
+
+select name, CompanyName, AAGrossAmount, ClearingDate from GROUPPLAN_V10_AAI.dbo.GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate between '2023-02-24' and '2023-03-03'
+and  ID_Company not in  (select ID_Company from GROUPPLAN_V10_AAI.dbo.GroupMarketingReportDetails where year(clearingdate)=2023 and ClearingDate between '2023-02-24' and '2023-03-03')
+order by 4, 1,2,3
+
+
+  
+
+
+
+----------------------GAAIP Annual
+select sum(amount)  from tb_Contributions where year(tperiod)=2023 and tperiod <='2023-06-30'
+----------------------GAAIP Quarter
+select sum(amount)  from tb_Contributions where tperiod between '2023-04-01' and '2023-06-30'
+----------------------GAAIP Weekly
+select sum(amount)  from tb_Contributions where tperiod between '2023-06-24' and '2023-06-30'
+
+
+
+------Previous Year Period LIFE Detail  --Annual
+Select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where year(TransactionDate)=2022 and  TransactionDate <= '2022-01-05'
+Select sum(amount) from TAKAFUL_REAL.dbo.VWIndividualMarketingReport where year(TransactionDate)=2022 and  TransactionDate <= '2022-01-05'
+select sum(amount)  from GROUPALLIANCEPLUS.dbo.tb_Contributions where year(tperiod)=2022 and tperiod <='2022-01-05'
+--select sum(AAGrossAmount) from GROUPPLAN_V10_AAI.dbo.GroupMarketingReportDetails where year(clearingdate) = 2022 and clearingdate<='20221007' 
+select sum(AAGrossAmount) from GROUPPLAN_V10_AAI.dbo.GroupMarketingReportDetails where year(clearingdate) = 2022 and clearingdate<='20220105' 
+
+select sum(a.amount) from GROUPPLAN_V10_AAI.dbo.ClearingDetails a inner join GROUPPLAN_V10_AAI.dbo.ClearingMaster b on a.ID_ClearingMaster=b.ID_ClearingMaster and a.ID_Company=b.ID_Company 
+inner join GROUPPLAN_V10_AAI.dbo.Company c on c.ID_Company=a.ID_Company and c.ID_Company=b.ID_Company inner join GROUPPLAN_V10_AAI.dbo.PolicyMaster d on d.ID_Company=a.ID_Company and 
+d.ID_PolicyMaster=a.ID_PolicyMaster 
+inner join GROUPPLAN_V10_AAI.dbo.Marketer e on e.ID_Marketer=d.ID_Marketer  where year(a.clearingdate) = 2021 and a.clearingdate<='20210826' 
+
+
+
+----Yearly
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate <= '2023-01-05'
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate <= '2023-01-05' and MonthDiff<=12
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate <= '2023-01-05' and MonthDiff>12
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate <= '2023-01-05' and ID_PlanType='IL'
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate <= '2023-01-05' and ID_PlanType<>'IL'
+----Ouarterly
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05'
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and MonthDiff<=12
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and MonthDiff>12
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and ID_PlanType='IL'
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and ID_PlanType<>'IL'
+----Period
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05'
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and MonthDiff<=12
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and MonthDiff>12
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and ID_PlanType='IL'
+select sum(amount) from MULTIPLAN_V10_AAI.dbo.VWIndividualMarketingReport where  year(TransactionDate)=2023 and  TransactionDate between '2023-01-01' and '2023-01-05' and ID_PlanType<>'IL'
+
+
+
+
+
+
+-----New marketer Insert
+set IDENTITY_INSERT  marketer  on
+insert into Marketer (id_marketer, marketercode, name, address, id_state, telephone, status) values (133,133, 'CHRISTY OKOFU', 'Port-Harcourt branch','	RIV','','A')
+set IDENTITY_INSERT  marketer  off
+
+
+INSERT INTO dbo.TargetBudget (ID_Marketer,ID_STATE,Year ,TargetBudget,Q3 ,Q4,M9,M10 ,M11 ,M12) VALUES
+           (133,'RIV', 2023, 40000000, 10000000,30000000,10000000,10000000,10000000,10000000)
+
+
+
+ 
+Ikosi@1914**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
