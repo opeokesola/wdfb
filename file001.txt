@@ -1,0 +1,25 @@
+
+
+select * from NaicomBasicInfo where PolicyID = ''
+
+select * from NaicomDetailInfo where policyno in (select policyno from NaicomBasicInfo where PolicyID = '')
+
+select * from NaicomInsuredInfo where proposalid in (select ProposalID from NaicomDetailInfo where policyno in (select policyno from NaicomBasicInfo where PolicyID = ''))
+
+
+update NaicomDetailInfo set BirthPlace = 'Lagos', IDDoc = 'NATIONAL_ID_CARD', IDNo = '0000000', Occupation = 'SALARIED' , Martial = 'MARRIED', Education = 'NON_MATRICULATION', PhoneWork = '08055598741', PhoneMobile = '08055598741', PhoneHome = '08055598741'
+where policyno in (select policyno from NaicomBasicInfo where PolicyID = '')
+
+update NaicomInsuredInfo set BeneficiaryAddress = 'n/a', BeneficiaryBirthDate = '1999-01-01 00:00:00.000', BeneficiaryGender = 'MALE', BeneficiaryPhone = '0706689123', BeneficiaryEmail = 'info@africanallianceplc.com',  BeneficiaryNote= 'n/a', BeneficiaryIDNo = '', BeneficiaryIDDoc = 'NATIONAL_ID_CARD', BenefitProportions = 1.0
+where proposalid in (select ProposalID from NaicomDetailInfo where policyno in (select policyno from NaicomBasicInfo where PolicyID = ''))
+
+
+
+update NaicomDetailInfo set Email = 'info@africanallianceplc.com'  where policyno in (select policyno from NaicomBasicInfo where PolicyID = '') and  Email = ''
+
+
+
+
+
+
+

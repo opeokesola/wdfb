@@ -1,0 +1,186 @@
+--------------------DDL
+
+CREATE TABLE [dbo].[NaicomBasicInfo](
+	[NaicomBasicInfoID] [int] IDENTITY(1,1) NOT NULL,
+	[ProposalID] [varchar](50) NOT NULL,
+	[TypeID] [int] NULL,
+	[CompanyID] [int] NOT NULL,
+	[PolicyMasterID] [int] NOT NULL,
+	[EffectiveDate] [datetime] NULL,
+	[MaturityDate] [datetime] NULL,
+	[PolicyNo] [varchar](20) NULL,
+	[Description] [varchar](150) NULL,
+	[UniquePolicyID] [varchar](25) NULL,
+	[PolicyID] [varchar](50) NULL,
+ CONSTRAINT [PK_NaicomBasicInfo] PRIMARY KEY CLUSTERED 
+(
+	[ProposalID] ASC,
+	[CompanyID] ASC,
+	[PolicyMasterID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+CREATE TABLE [dbo].[NaicomDetailInfo](
+	[NaicomDetailInfoID] [int] IDENTITY(1,1) NOT NULL,
+	[ID_Company] [int] NOT NULL,
+	[ID_PolicyMaster] [int] NOT NULL,
+	[PolicyNo] [varchar](20) NOT NULL,
+	[EmployerName] [varchar](150) NULL,
+	[EmployerAddressLine] [varchar](150) NULL,
+	[EmployerCityLGA] [varchar](50) NULL,
+	[EmployerState] [varchar](50) NULL,
+	[EmployerPostCode] [varchar](6) NULL,
+	[EmployerType] [varchar](75) NULL,
+	[EmployerRegistrationNo] [varchar](15) NULL,
+	[EmployerOccupation] [varchar](50) NULL,
+	[EmployerPhone] [varchar](30) NULL,
+	[EmployerEmail] [varchar](20) NULL,
+	[EmployerNature] [varchar](50) NULL,
+	[ProductName] [varchar](50) NULL,
+	[ProductType] [varchar](50) NULL,
+	[InsuranceBenefits] [varchar](15) NULL,
+	[InsuredValue] [decimal](18, 2) NULL,
+	[Premium] [decimal](18, 2) NULL,
+	[CommissionFee] [decimal](18, 2) NULL,
+	[ExtraFee] [decimal](18, 2) NULL,
+	[PremiumNote] [varchar](50) NULL,
+	[Terms] [varchar](50) NULL,
+	[Preamble] [varchar](50) NULL,
+	[Endorsements] [varchar](50) NULL,
+	[Exclusions] [varchar](50) NULL,
+	[Exceptions] [varchar](50) NULL,
+	[Conditions] [varchar](50) NULL,
+ CONSTRAINT [PK_NaicomDetailInfo] PRIMARY KEY CLUSTERED 
+(
+	[ID_Company] ASC,
+	[ID_PolicyMaster] ASC,
+	[PolicyNo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+CREATE TABLE [dbo].[NaicomInsuredInfo](
+	[NaicomInsuredInfoID] [int] IDENTITY(1,1) NOT NULL,
+	[ID_PolicyMaster] [int] NOT NULL,
+	[effectivedate] [datetime] NULL,
+	[maturitydate] [datetime] NULL,
+	[year] [int] NULL,
+	[ID_PolicyDetail] [int] NOT NULL,
+	[ReInsure] [int] NULL,
+	[InsuredNo] [int] NULL,
+	[MemberName] [varchar](150) NULL,
+	[MemberAddress] [varchar](150) NULL,
+	[MemberBirthDate] [datetime] NULL,
+	[MemberGender] [varchar](10) NULL,
+	[MemberIDDoc] [varchar](20) NULL,
+	[MemberIDNo] [varchar](20) NULL,
+	[MemberPhone] [varchar](20) NULL,
+	[MemberEmail] [varchar](20) NULL,
+	[Beneficiary_0_Name] [varchar](50) NULL,
+	[Beneficiary_0_Address] [varchar](100) NULL,
+	[Beneficiary_0_BirthDate] [datetime] NULL,
+	[Beneficiary_0_Relationship] [varchar](30) NULL,
+	[Beneficiary_0_Phone] [varchar](20) NULL,
+	[Beneficiary_0_Email] [varchar](50) NULL,
+	[Beneficiary_1_Name] [varchar](50) NULL,
+	[Beneficiary_1_Address] [varchar](100) NULL,
+	[Beneficiary_1_BirthDate] [datetime] NULL,
+	[Beneficiary_1_Relationship] [varchar](30) NULL,
+	[Beneficiary_1_Phone] [varchar](20) NULL,
+	[Beneficiary_1_Email] [varchar](50) NULL,
+ CONSTRAINT [PK_NaicomInsuredInfo] PRIMARY KEY CLUSTERED 
+(
+	[ID_PolicyMaster] ASC,
+	[ID_PolicyDetail] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+
+---------------------------------------Group Life INSERT
+insert into  naicombasicinfo  
+select a.ID_PolicyMaster, 70 as TypeID, a.ID_Company, a.ID_PolicyMaster, a.EffectiveDate as CoverageStartDate, a.MaturityDate as CoverageEndDate, a.ProposalNo, a.Narration, '',''   from 
+PolicyMaster a 
+inner join Company b on a.ID_Company=b.ID_Company 
+where year(a.EffectiveDate) >='2016' and a.Status in ('A')  and EXISTS  (SELECT ID_PolicyMaster FROM PolicyDetail e WHERE e.ID_PolicyMaster=a.ID_PolicyMaster) order by 
+a.EffectiveDate, a.ID_PolicyMaster
+
+
+insert into NaicomDetailInfo  
+select  a.ID_Company, a.ID_PolicyMaster, a.PolicyNo, b.CompanyName, b.Address01 + ' ' + b.address02 as EmployerAddressLine, e.name, e.name, e.PostalCode,d.GroupName, 
+'0000000000' as EmployerRegistrationNo, 'SALARIED' as EmployerOccupation, b.Telephone as EmployerTelephone, 'noemail@noemail.com' as EmployerEmail, d.GroupName,c.description, c.description,  
+'Group' as InsuranceBenefits, a.GrossSumAssured, 
+a.GrossPremium as Premium, a.ComisionAmount as CommissionFee, 0.00 as ExtraFeee, '' as PremiumNote, '' as Terms, '' as Preamble, '' as Endorsements, '' as Exclusions, '' as Exceptions, '' as Conditions
+from PolicyMaster a 
+inner join company b on a.ID_Company=b.ID_Company 
+inner join Plans c on c.PlanID=a.PlanID 
+inner join CompanyGroup d on d.ID_CompanyGroup=b.ID_CompanyGroup
+inner join NaicomState e on e.StateID=b.id_state
+inner join Naicombasicinfo  f on f.companyID=a.ID_Company and f.policymasterID=a.ID_PolicyMaster   
+
+
+insert into NaicomInsuredInfo  
+select a.ID_PolicyMaster, b.EffectiveDate, b.MaturityDate, year(b.EffectiveDate) Year, ID_PolicyDetail, ReInsure,   EmpSerialNumber as InsuredNo,  FullName as MemberName, c.Address01 + ' ' + c.address02 as MemberAddress, b.DateOfBirth as MemberBirthDate, 
+CASE b.Sex
+		WHEN 'M' THEN 'MALE'
+        WHEN 'F' THEN 'FEMALE'
+		ELSE 'UNKNOWN' END 
+as MemberGender, 
+'NATIONAL_ID_CARD' as MemberIDDoc,  '0000000000' as MemberIDNo, '08000000000' as MemberPhone, 'noemail@oemail.com' as MemberEmail, 
+'NO NAME' as Beneficiary_0_Name, 'NO NAME' as Beneficiary_0_Address, '1/1/1900' as Beneficiary_0_BirthDate, 'UNKNOWN' as Beneficiary_0_Relationship, '08000000000' as Beneficiary_0_Phone, 'noemail@oemail.com' as Beneficiary_0_Email,
+'NO NAME' as Beneficiary_1_Name, 'NO NAME' as Beneficiary_1_Address, '1/1/1900' as Beneficiary_1_BirthDate, 'UNKNOWN' as Beneficiary_1_Relationship, '08000000000' as Beneficiary_1_Phone, 'noemail@oemail.com' as Beneficiary_1_Email
+from  PolicyMaster a 
+inner join PolicyDetail b on a.ID_PolicyMaster=b.ID_PolicyMaster
+inner join company c on c.ID_Company=a.ID_Company
+ where a.ID_PolicyMaster in (select ID_PolicyMaster from NaicomDetailInfo)
+
+
+-----------------------------------
+
+update NaicomDetailInfo set PremiumNote='n/a', Terms='n/a', Preamble='n/a', Endorsements='n/a', Exclusions='n/a', Exceptions='n/a', Conditions='n/a'
+
+
+
+
+
+---------------------------------------Group Life UPDATABLE
+insert into  naicombasicinfo  
+select a.ID_PolicyMaster, 70 as TypeID, a.ID_Company, a.ID_PolicyMaster, a.EffectiveDate as CoverageStartDate, a.MaturityDate as CoverageEndDate, a.ProposalNo, a.Narration, '',''   from 
+PolicyMaster a 
+inner join Company b on a.ID_Company=b.ID_Company 
+where year(a.EffectiveDate) >='2016' and a.Status in ('A')  and EXISTS  (SELECT ID_PolicyMaster FROM PolicyDetail e WHERE e.ID_PolicyMaster=a.ID_PolicyMaster) and a.ID_PolicyMaster not in (select proposalid from naicombasicinfo)  order by 
+a.EffectiveDate, a.ID_PolicyMaster
+
+
+insert into NaicomDetailInfo  
+select  a.ID_Company, a.ID_PolicyMaster, a.PolicyNo, b.CompanyName, b.Address01 + ' ' + b.address02 as EmployerAddressLine, e.name, e.name, e.PostalCode,d.GroupName, 
+'0000000000' as EmployerRegistrationNo, 'SALARIED' as EmployerOccupation, b.Telephone as EmployerTelephone, 'noemail@noemail.com' as EmployerEmail, d.GroupName,c.description, c.description,  
+'Group' as InsuranceBenefits, a.GrossSumAssured, 
+a.GrossPremium as Premium, a.ComisionAmount as CommissionFee, 0.00 as ExtraFeee, '' as PremiumNote, '' as Terms, '' as Preamble, '' as Endorsements, '' as Exclusions, '' as Exceptions, '' as Conditions
+from PolicyMaster a 
+inner join company b on a.ID_Company=b.ID_Company 
+inner join Plans c on c.PlanID=a.PlanID 
+inner join CompanyGroup d on d.ID_CompanyGroup=b.ID_CompanyGroup
+inner join NaicomState e on e.StateID=b.id_state
+inner join Naicombasicinfo  f on f.companyID=a.ID_Company and f.policymasterID=a.ID_PolicyMaster 
+where  a.ID_PolicyMaster in (select proposalID from naicombasicinfo where proposalid not in (select ID_PolicyMaster from NaicomDetailInfo))   
+
+
+insert into   NaicomInsuredInfo
+select a.ID_PolicyMaster, b.EffectiveDate, b.MaturityDate, year(b.EffectiveDate) Year, ID_PolicyDetail, ReInsure,   EmpSerialNumber as InsuredNo,  FullName as MemberName, c.Address01 + ' ' + c.address02 as MemberAddress, b.DateOfBirth as MemberBirthDate, 
+CASE b.Sex
+		WHEN 'M' THEN 'MALE'
+        WHEN 'F' THEN 'FEMALE'
+		ELSE 'UNKNOWN' END 
+as MemberGender, 
+'NATIONAL_ID_CARD' as MemberIDDoc,  '0000000000' as MemberIDNo, '08000000000' as MemberPhone, 'noemail@oemail.com' as MemberEmail, 
+'NO NAME' as Beneficiary_0_Name, 'NO NAME' as Beneficiary_0_Address, '1/1/1900' as Beneficiary_0_BirthDate, 'UNKNOWN' as Beneficiary_0_Relationship, '08000000000' as Beneficiary_0_Phone, 'noemail@oemail.com' as Beneficiary_0_Email,
+'NO NAME' as Beneficiary_1_Name, 'NO NAME' as Beneficiary_1_Address, '1/1/1900' as Beneficiary_1_BirthDate, 'UNKNOWN' as Beneficiary_1_Relationship, '08000000000' as Beneficiary_1_Phone, 'noemail@oemail.com' as Beneficiary_1_Email
+from  PolicyMaster a 
+inner join PolicyDetail b on a.ID_PolicyMaster=b.ID_PolicyMaster
+inner join company c on c.ID_Company=a.ID_Company
+ where a.ID_PolicyMaster in (select ID_PolicyMaster  from NaicomDetailInfo where ID_PolicyMaster not in (select ID_PolicyMaster from NaicomInsuredInfo)) 
+ 
+ 
+ 

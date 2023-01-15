@@ -1,0 +1,246 @@
+insert into naicombasicinfo  select a.ProposalID, c.InsuranceTypeID as TypeID, a.EffectiveDate as CoverageStartDate, a.MaturityDate as CoverageEndDate, a.PolicyNo as PolicyInternalID, b.Description as PolicyDescription, '' as uniquepolicyID,'' as policyID  from 
+policy a 
+inner join plans b on a.PlanID=b.PlanID 
+inner join NaicomProductsPlansMapping c on c.PlanID=a.PlanID 
+where year(EffectiveDate) ='2021' and StatusID in ('IF','PU','LP') and policyno not in (select policyno from naicombasicinfo where year(EffectiveDate) ='2021')
+
+
+
+
+insert into NaicomDetailInfo  
+select a.ID_Customer, a.ProposalID, a.PolicyNo,  a.Surname, a.FirstName, ResStreet1 + ' ' +ResStreet2 as AddressLine, f.Capital as CityLGA, f.Name as State, f.PostalCode,  DateOfBirth, TownName as BirthPlace, 
+CASE Sex
+        WHEN 'M' THEN 'MALE'
+        WHEN 'F' THEN 'FEMALE'
+    END As Gender, 
+'Nigerian' as  Nationality, '' as IDdoc, NationalIdNo as IDNo,  c.Title as Occupation, 
+CASE a.MaritalStatus
+        WHEN 'S' THEN 'SINGLE'
+		WHEN 'M' THEN 'MARIIED'
+		WHEN 'D' THEN 'DIVORCED'
+        WHEN 'W' THEN 'WIDOWED'
+    END As MaritalStatus,'' as Education,  Office_Telephone, ResTelephone, GsmPhone,
+email, b.Description as ProductName, d.PlanTypeName as ProductType, 
+CASE a.PlanID
+		WHEN 'PFC' THEN EntryAge
+		WHEN 'PRA' THEN EntryAge 
+		ELSE 0 END 
+	as PensionEntryAge, 
+CASE b.PlanID
+		WHEN 'PFC' THEN b.Description
+		WHEN 'PRA' THEN b.Description 
+		ELSE 'n/a' END 
+	as PensionPlanDetail, 
+	isnull(BasePension,0.00) as  AnnualEmolument, 
+CASE b.PlanID
+		WHEN 'PFC' THEN b.Description
+		WHEN 'PRA' THEN b.Description 
+		ELSE 'n/a' END 
+	as AnnuityType, 
+RetirePension as AnnuityAmount, 'n/a' as  MedicalConditions, 'n/a' as  MedicalHistory,
+CASE a.PlanID
+		WHEN 'MP5' THEN b.Description
+		WHEN 'MPS' THEN b.Description 
+		WHEN 'GPP' THEN b.Description
+		WHEN 'GSP' THEN b.Description 
+		ELSE 'n/a' END 
+	as MortgagePortfolio, 
+CASE a.PlanID
+		WHEN 'MP5' THEN SumAssured
+		WHEN 'MPS' THEN SumAssured 
+		WHEN 'GPP' THEN SumAssured
+		WHEN 'GSP' THEN SumAssured 
+		ELSE 0.00 END 
+	as MortgageValue, 
+CASE a.PlanID
+		WHEN 'MP5' THEN SumAssured
+		WHEN 'MPS' THEN SumAssured 
+		WHEN 'GPP' THEN SumAssured
+		WHEN 'GSP' THEN SumAssured 
+		ELSE 0.00 END 
+	as InsuredValue, RegularPremium as Premium, 0.00 as CommissionFee, 0.00  as ExtraFee, '' as PremiumNote, '' as Terms, '' as Preamble, '' as Endorsements, '' as Exclusions, '' as Exceptions, '' as Conditions
+from policy a 
+inner join plans b on a.PlanID=b.PlanID 
+inner join Ocupatn c on c.OccupationID=a.OccupationID 
+inner join PlanType d on d.ID_PlanType=b.ID_PlanType
+inner join pob e on e.BirthPlaceID=a.BirthPlaceID
+inner join NaicomState f on f.StateID=a.ResStateID
+where policyno in (select policyno from naicombasicinfo where NaicomBasicInfoID>=20185 )
+
+
+
+insert into NaicomInsuredInfo  
+select a.proposalid, 1 as InsuredNo,  name as BeneficiaryName, FullAddress as BeneficiaryAddress, dob as BeneficiaryBirthDate, '' as BeneficiaryGender, GSMPhone as BeneficiaryPhone,
+ '' as email, '' as BeneficiaryIDDoc, '' as BeneficiaryIDNo, b.relationship as BeneficiaryRelationship, isnull(a.Proportion,0) as BenefitProportions, '' as BeneficiaryNote  from 
+Benefact a inner join Relationship b on a.ID_Relationship=b.ID_Relationship where proposalid in (select proposalid from naicombasicinfo where NaicomBasicInfoID>=20185)
+
+
+
+--------- 
+insert into NaicomDetailInfo  
+select a.ID_Customer, a.ProposalID, a.PolicyNo,  a.Surname, a.FirstName, ResStreet1 + ' ' +ResStreet2 as AddressLine, f.Capital as CityLGA, f.Name as State, f.PostalCode,  DateOfBirth, TownName as BirthPlace, 
+CASE Sex
+        WHEN 'M' THEN 'Male'
+        WHEN 'F' THEN 'Female'
+    END As Gender, 
+'Nigerian' as  Nationality, '' as IDdoc, NationalIdNo as IDNo,  c.Title as Occupation, 
+CASE a.MaritalStatus
+        WHEN 'S' THEN 'Single'
+		WHEN 'M' THEN 'Married'
+		WHEN 'D' THEN 'Divorced'
+        WHEN 'W' THEN 'Widowed'
+    END As MaritalStatus,'' as Education,  Office_Telephone, ResTelephone, GsmPhone,
+email, b.Description as ProductName, d.PlanTypeName as ProductType, 
+CASE a.PlanID
+		WHEN 'PFC' THEN EntryAge
+		WHEN 'PRA' THEN EntryAge 
+		ELSE 0 END 
+	as PensionEntryAge, 
+CASE b.PlanID
+		WHEN 'PFC' THEN b.Description
+		WHEN 'PRA' THEN b.Description 
+		ELSE 'n/a' END 
+	as PensionPlanDetail, 
+	isnull(BasePension,0.00) as  AnnualEmolument, 
+CASE b.PlanID
+		WHEN 'PFC' THEN b.Description
+		WHEN 'PRA' THEN b.Description 
+		ELSE 'n/a' END 
+	as AnnuityType, 
+RetirePension as AnnuityAmount, 'n/a' as  MedicalConditions, 'n/a' as  MedicalHistory,
+CASE a.PlanID
+		WHEN 'MP5' THEN b.Description
+		WHEN 'MPS' THEN b.Description 
+		WHEN 'GPP' THEN b.Description
+		WHEN 'GSP' THEN b.Description 
+		ELSE 'n/a' END 
+	as MortgagePortfolio, 
+CASE a.PlanID
+		WHEN 'MP5' THEN SumAssured
+		WHEN 'MPS' THEN SumAssured 
+		WHEN 'GPP' THEN SumAssured
+		WHEN 'GSP' THEN SumAssured 
+		ELSE 0.00 END 
+	as MortgageValue, 
+CASE a.PlanID
+		WHEN 'MP5' THEN SumAssured
+		WHEN 'MPS' THEN SumAssured 
+		WHEN 'GPP' THEN SumAssured
+		WHEN 'GSP' THEN SumAssured 
+		ELSE 0.00 END 
+	as InsuredValue, RegularPremium as Premium, 0.00 as CommissionFee, 0.00  as ExtraFee, '' as PremiumNote, '' as Terms, '' as Preamble, '' as Endorsements, '' as Exclusions, '' as Exceptions, '' as Conditions
+from policy a 
+inner join plans b on a.PlanID=b.PlanID 
+inner join Ocupatn c on c.OccupationID=a.OccupationID 
+inner join PlanType d on d.ID_PlanType=b.ID_PlanType
+inner join pob e on e.BirthPlaceID=a.BirthPlaceID
+inner join NaicomState f on f.StateID=a.ResStateID
+where policyno in (select policyno from naicombasicinfo where NaicomBasicInfoID>=6661 )
+
+
+
+insert into NaicomInsuredInfo  
+
+select a.proposalid, 1 as InsuredNo,  name as BeneficiaryName, FullAddress as BeneficiaryAddress, dob as BeneficiaryBirthDate, '' as BeneficiaryGender, GSMPhone as BeneficiaryPhone,
+ '' as email, '' as BeneficiaryIDDoc, '' as BeneficiaryIDNo, b.relationship as BeneficiaryRelationship, isnull(a.Proportion,0) as BenefitProportions, '' as BeneficiaryNote  from 
+Benefact a inner join Relationship b on a.ID_Relationship=b.ID_Relationship where proposalid in (select proposalid from naicombasicinfo where NaicomBasicInfoID>=6661)
+
+
+--------------------------------------------Count of Unloaded-----------------------------------------------------
+select * from naicombasicinfo where policyid =''
+
+select distinct ProposalID from NaicomDetailInfo where ProposalID in (select ProposalID from naicombasicinfo where policyid ='')
+
+select distinct ProposalID from NaicomInsuredInfo where ProposalID in (select ProposalID from naicombasicinfo where policyid ='')
+
+
+A06095
+
+-----------------------	UPDATES FOR INDIVIDUAL POLICIES	-------------------------------------------------------------------------------------------------------------------------------
+
+insert into naicombasicinfo  select a.ProposalID, c.InsuranceTypeID as TypeID, a.EffectiveDate as CoverageStartDate, a.MaturityDate as CoverageEndDate, a.PolicyNo as PolicyInternalID, b.Description as PolicyDescription, '' as uniquepolicyID,'' as policyID  from 
+policy a 
+inner join plans b on a.PlanID=b.PlanID 
+inner join NaicomProductsPlansMapping c on c.PlanID=a.PlanID 
+where EffectiveDate >='2021-10-01' and StatusID in ('IF','PU','LP') and policyno not in (select policyno from naicombasicinfo)
+
+
+select * from naicombasicinfo where ProposalID not in (select ProposalID from NaicomDetailInfo)
+
+insert into NaicomDetailInfo  
+select a.ID_Customer, a.ProposalID, a.PolicyNo,  a.Surname, a.FirstName, ResStreet1 + ' ' +ResStreet2 as AddressLine, f.Capital as CityLGA, f.Name as State, f.PostalCode,  DateOfBirth, TownName as BirthPlace, 
+CASE Sex
+        WHEN 'M' THEN 'MALE'
+        WHEN 'F' THEN 'FEMALE'
+    END As Gender, 
+'Nigerian' as  Nationality, 'NATIONAL_ID_CARD' as IDdoc, NationalIdNo as IDNo,  c.Title as Occupation, 
+CASE a.MaritalStatus
+        WHEN 'S' THEN 'SINGLE'
+		WHEN 'M' THEN 'MARRIED'
+		WHEN 'D' THEN 'DIVORCED'
+        WHEN 'W' THEN 'WIDOWED'
+    END As MaritalStatus,'' as Education,  Office_Telephone, ResTelephone, GsmPhone,
+email, b.Description as ProductName, d.PlanTypeName as ProductType, 
+CASE a.PlanID
+		WHEN 'PFC' THEN EntryAge
+		WHEN 'PRA' THEN EntryAge 
+		ELSE 0 END 
+	as PensionEntryAge, 
+CASE b.PlanID
+		WHEN 'PFC' THEN b.Description
+		WHEN 'PRA' THEN b.Description 
+		ELSE 'n/a' END 
+	as PensionPlanDetail, 
+	isnull(BasePension,0.00) as  AnnualEmolument, 
+CASE b.PlanID
+		WHEN 'PFC' THEN b.Description
+		WHEN 'PRA' THEN b.Description 
+		ELSE 'n/a' END 
+	as AnnuityType, 
+RetirePension as AnnuityAmount, 'n/a' as  MedicalConditions, 'n/a' as  MedicalHistory,
+CASE a.PlanID
+		WHEN 'MP5' THEN b.Description
+		WHEN 'MPS' THEN b.Description 
+		WHEN 'GPP' THEN b.Description
+		WHEN 'GSP' THEN b.Description 
+		ELSE 'n/a' END 
+	as MortgagePortfolio, 
+CASE a.PlanID
+		WHEN 'MP5' THEN SumAssured
+		WHEN 'MPS' THEN SumAssured 
+		WHEN 'GPP' THEN SumAssured
+		WHEN 'GSP' THEN SumAssured 
+		ELSE 0.00 END 
+	as MortgageValue, 
+CASE a.PlanID
+		WHEN 'MP5' THEN SumAssured
+		WHEN 'MPS' THEN SumAssured 
+		WHEN 'GPP' THEN SumAssured
+		WHEN 'GSP' THEN SumAssured 
+		ELSE 0.00 END 
+	as InsuredValue, RegularPremium as Premium, 0.00 as CommissionFee, 0.00  as ExtraFee, 'n/a' as PremiumNote, 'n/a' as Terms, 'n/a' as Preamble, 'n/a' as Endorsements, 'n/a' as Exclusions, 'n/a' as Exceptions, 'n/a' as Conditions
+from policy a 
+inner join plans b on a.PlanID=b.PlanID 
+inner join Ocupatn c on c.OccupationID=a.OccupationID 
+inner join PlanType d on d.ID_PlanType=b.ID_PlanType
+inner join pob e on e.BirthPlaceID=a.BirthPlaceID
+inner join NaicomState f on f.StateID=a.ResStateID
+where policyno  in (select policyno from naicombasicinfo where ProposalID not in (select ProposalID from NaicomDetailInfo))
+
+
+
+select proposalid from naicombasicinfo where ProposalID not in (select ProposalID from NaicomInsuredInfo)
+
+insert into NaicomInsuredInfo  
+select a.proposalid, 1 as InsuredNo,  name as BeneficiaryName, FullAddress as BeneficiaryAddress, dob as BeneficiaryBirthDate, '' as BeneficiaryGender, GSMPhone as BeneficiaryPhone,
+ '' as email, '' as BeneficiaryIDDoc, '' as BeneficiaryIDNo, b.relationship as BeneficiaryRelationship, isnull(a.Proportion,0) as BenefitProportions, '' as BeneficiaryNote  from 
+Benefact a inner join Relationship b on a.ID_Relationship=b.ID_Relationship where proposalid in (select proposalid from naicombasicinfo where ProposalID not in (select ProposalID from NaicomInsuredInfo))
+
+
+
+
+
+
+
+
+
